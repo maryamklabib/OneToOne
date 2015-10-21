@@ -18,6 +18,11 @@ public class TestProductToCustomer {
 	 * writer.write("Sales Taxes: " + salltaxes + "\n");
 	 * writer.write("Total: " + sallprices);
 	 * writer.close();
+	 * 
+	 * I made files that the class writes to, and I compared their contents.
+	 * All you need to get the print statements is to set
+	 * either the allinputs path to a text file path that has all lines
+	 * or for each test case, set the path to a file with an example.
 
 	 * **/
 
@@ -26,20 +31,22 @@ public class TestProductToCustomer {
 		
 		//Saving the files and paths we're testing
 		
-		String inputpath1 = "/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/input1";
-		String inputpath2 = "/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/input2";
-		String inputpath3 = "/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/input3";
+		String inputpath1 = "/ProductToCustomer/src/input1";
+		String inputpath2 = "ProductToCustomer/src/input2";
+		String inputpath3 = "ProductToCustomer/src/input3";
 		
-		File output1 = new File("/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/output1");
-		File output2 = new File("/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/output2");
-		File output3 = new File("/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/output3");
+		String allinputs = "ProductToCustomer/src/allinputs";
 		
-		String testpath1 = "/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/test1";
-		String testpath2 = "/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/test2";
-		String testpath3 = "/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/test3";
-		File test1 = new File("/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/test1");
-		File test2 = new File("/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/test2");
-		File test3 = new File("/Users/lababib/Documents/eclipsecode/ProductToCustomer/src/test3");
+		File output1 = new File("ProductToCustomer/src/output1");
+		File output2 = new File("ProductToCustomer/src/output2");
+		File output3 = new File("ProductToCustomer/src/output3");
+		
+		String testpath1 = "ProductToCustomer/src/test1";
+		String testpath2 = "ProductToCustomer/src/test2";
+		String testpath3 = "ProductToCustomer/src/test3";
+		File test1 = new File("ProductToCustomer/src/test1");
+		File test2 = new File("ProductToCustomer/src/test2");
+		File test3 = new File("ProductToCustomer/src/test3");
 
 		
 		//call method with the file path passed in
@@ -52,29 +59,30 @@ public class TestProductToCustomer {
 			ProductToCustomer.main(args);
 						
 			//Testing second example
-//			args = new String[2];
-//			args[0] = inputpath2;
-//			args[1] = testpath2;
-//			ProductToCustomer.main(args);
+			args[0] = inputpath2;
+			args[1] = testpath2;
+			ProductToCustomer.main(args);
 
 			
 			//Testing third example
-//			args = new String[2];
-//			args[0] = inputpath3;
-//			args[1] = testpath3;
-//			ProductToCustomer.main(args);
+			args[0] = inputpath3;
+			args[1] = testpath3;
+			ProductToCustomer.main(args);
 				
-		
+			//Testing multiple lines in one file
+			args[0] = allinputs;
+			ProductToCustomer.main(args);
+			
 			//Confirm the output
 		
 			boolean compare1 = FileUtils.contentEquals(output1, test1);
-			System.out.println("Are output1 and test1 the same? " + compare1);
+			System.out.println("Are we getting the same output for the first case? " + compare1);
 			
 			boolean compare2 = FileUtils.contentEquals(output2, test2);
-			System.out.println("Are output2 and test2 the same? " + compare2);
+			System.out.println("Are we getting the same output for the second case? " + compare2);
 			
 			boolean compare3 = FileUtils.contentEquals(output3, test3);
-			System.out.println("Are output3 and test3 the same? " + compare3);
+			System.out.println("Are we getting the same output for the third case? " + compare3);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

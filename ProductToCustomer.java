@@ -27,8 +27,16 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+	/**
+	 * 
+	 * @author Maryam Labib
+	 * You can directly call the main method if you have an array of strings with the pathname
+	 * or you can call the maxSSScore method if you have the file object.
+	 *
+	 */
      public class ProductToCustomer 
      {
+    	 
     	 public static File inputfile;
     	 public static File outputfile;
     	 public static Boolean customerChanges = true;
@@ -40,34 +48,14 @@ import java.util.Arrays;
         	 maxSSScore(inputfile);
          }
          
+         /**
+          * 
+          * @param textfile it will read line by line and determine the highest possible SS score of the options.
+          * @throws FileNotFoundException if the textfile passed in is invalid
+          * @throws IOException the usual i/o errors that can happen
+          */
          public static void maxSSScore(File textfile) throws FileNotFoundException, IOException
          {
-        	/**
-        	 * assume text file is one line,
-        	 * for each line,
-        	 * will split on semicolon
-        	 * and save the first half as the customers, delimit on commas
-        	 * and save the second half as the products, delimit on commas
-        	 * 
-        	 *now for an array of length n, there can be p permutations
-        	 *make an array of length p that stores p arrays where each is a permutation of the og array
-        	 *
-        	 *make a cache for each customer to product combination, such that when you're building up the lists,
-        	 *it's constant access time.
-        	 *
-        	 *
-        	 *now also make a hashset that maps strings to SS score
-        	 *the string is permutation + customer, the value is SS score as a double
-        	 *
-        	 *for each permutation of the customer array, get the SS score of that with the same array of products
-        	 *have a helper function, given two arrays, finds the SS score between them until length of one ends
-        	 *and returns it as a double
-        	 *
-        	 *save that in the all time total
-        	 *
-        	 *after that loop return the all time total
-        	 */
-             Double maxSS = 21.00;
         	 String line;
              BufferedReader in;
              
@@ -78,6 +66,7 @@ import java.util.Arrays;
              //read the file
              while(line != null)
              {
+            	 	Double maxSS = 0.00;
             	 	//parse each line to a list of two items
             	 	String[] two = line.split(";");
             	 	//the first half of it is the customers
@@ -86,27 +75,26 @@ import java.util.Arrays;
             	 	//the second half is the products
             	 	String[] products = two[1].split(",");
             	 	
-            	 	//see which list is longer
-            	 	String[] listtopermutate;
+            	 	//see which list is longer and make all permutations of the longer one
+            	 	//keep a boolean to track if you're permuting the customers or the products
+            	 	String[] changes;
             	 	String[] control;
             	 	if (customers.length >= products.length)
             	 	{
-            	 		listtopermutate = customers;
+            	 		changes = customers;
             	 		control = products;
             	 		customerChanges = true;
             	 	} else
             	 	{
-            	 		listtopermutate = products;
+            	 		changes = products;
             	 		control = customers;
             	 		customerChanges = false;
             	 	}
             	 	
-            	 	//we want to make a list of all the permutations of the list
-            	 	ArrayList<ArrayList<String>> permutations = permute(listtopermutate);
+            	 	//make a list of all the permutations of the list
+            	 	ArrayList<ArrayList<String>> permutations = permute(changes);
             	 	
-            	 	System.out.println(permutations.toString());
-            	 	
-            	 	//for each permutation, get SS score and keep track of highest
+            	 	//for each permutation, get SS score of products to customers and keep track of highest
             	 	for (int i = 0; i < permutations.size(); i ++)
             	 	{
                 	 	Double test = getSS(permutations.get(i), control);
@@ -116,38 +104,39 @@ import java.util.Arrays;
                 	 	}
 	
             	 	}
-            	 	System.out.println(two[0]);
-            	 	System.out.println(two[1]);
+            	 	System.out.print(decim.format(maxSS));
+            	 	System.out.println();
             	 	line = in.readLine();
              }
-             System.out.println(decim.format(maxSS));
              in.close();
          }
          
 		 
 		/**
-		 * This is the permutations function.
+		 * Given a list of strings, returns an arraylist of each possible permutation of the
+		 * list [the mini lists are arraylists too]
 		 */
-		 private static ArrayList<ArrayList<String>> permute(String[] num) {
+		 private static ArrayList<ArrayList<String>> permute(String[] str) {
 				ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
 			 
-				//start from an empty list
+				//would rather work with ArrayLists haha
 				result.add(new ArrayList<String>());
 			 
-				for (int i = 0; i < num.length; i++) {
-					//list of list in current iteration of the array num
+				for (int i = 0; i < str.length; i++) {
+
+					//list of list in current iteration of the array str
 					ArrayList<ArrayList<String>> current = new ArrayList<ArrayList<String>>();
 			 
 					for (ArrayList<String> l : result) {
 						// # of locations to insert is largest index + 1
 						for (int j = 0; j < l.size()+1; j++) {
-							// + add num[i] to different locations
-							l.add(j, num[i]);
+							// + add str[i] to different locations
+							l.add(j, str[i]);
 			 
 							ArrayList<String> temp = new ArrayList<String>(l);
 							current.add(temp);
 			 
-							// - remove num[i] add
+							// - remove str[i] add
 							l.remove(j);
 						}
 					}
@@ -161,9 +150,9 @@ import java.util.Arrays;
 		 
 		 /**
 		  * 
-		  * @param changes
-		  * @param control
-		  * @return the SS score
+		  * @param changes this is the one that's a permutation
+		  * @param control this is the one that was never changed
+		  * @return the SS score of this combination
 		  */
          
          private static double getSS(ArrayList<String> changes, String[] control ) {
@@ -188,44 +177,64 @@ import java.util.Arrays;
         	 }
         	 
         	 //gonna start going through each element
-        	 int range = Math.min(changes.size(), control.length);
-        	 Double sum = 0.00;
-        	 for (int i = 0; i < range; i++)
+        	 Double total = 0.00; //for this whole permutations
+        	 for (int i = 0; i < Math.min(products.size(), customers.size()); i++)
         	 {
+        		 Double sum = 0.00; //for just this product and customer
         		 String product = products.get(i);
         		 String customer = customers.get(i);
-//            	 1. If the number of letters in the product's name is even then the SS is the number of vowels (a, e, i, o, u, y) 
-//            	 in the customer's name multiplied by 1.5.
-        		 if (product.length() % 2 == 0)
+        		 
+        		 /**
+        		  * Note: I considered caching a lot of the things we were calculating over and over,
+        		  * such as number of letters, number of vowels, number of consonants, 
+        		  * and perhaps most efficiently SS scores for each combination.
+        		  */
+//            	 1. If the number of letters in the product's name is even then the SS is 
+//        		 the number of vowels (a, e, i, o, u, y) in the customer's name multiplied by 1.5.
+        		 int numLetters = getNumLetters(product);
+        		 int numCus = getNumLetters(customer);
+        		 if (numLetters % 2 == 0)
         		 {
         			 double vow = getNumVowels(customer);
         			 sum += vow * 1.5;
         		 }
         		
-//            	 2. If the number of letters in the product's name is odd then the SS is the number of consonants in the customer's name. 
-        		 if (product.length() % 2 != 0)
+//            	 2. If the number of letters in the product's name is odd then the SS is the number
+//        		 of consonants in the customer's name. 
+        		 if (numLetters % 2 != 0)
         		 {
-        			 double con = getNumConsonants(customer);
-        			 sum += con * 1.5;
+        			 sum += getNumConsonants(customer);
         		 }
 
-//            	 3. If the number of letters in the product's name shares any common factors (besides 1) with the number of letters 
-//            	 in the customer's name then the SS is multiplied by 1.5. 
-        		 if (gcf(product.length(), customer.length()) > 1)
+//            	 3. If the number of letters in the product's name shares any common factors (besides 1) 
+//        		 with the number of letters in the customer's name then the SS is multiplied by 1.5. 
+        		 if (gcf(numLetters, numCus) != 1)
         		 {
-        			 sum *= 1.5;
+        			 sum = sum * 1.5;
         		 }
-
+        		 total += sum;
         	 }
-         	 return sum;
+         	 return total;
  		}
 
-		private static double getNumConsonants(String customer) {
-			String s = customer.toLowerCase();
+		private static int getNumLetters(String product) {
+			int sum = 0;
+			for (int i = 0; i < product.length(); i++)
+			{
+				if (Character.isAlphabetic(product.charAt(i)))
+				{
+					sum += 1;
+				}
+			}
+			return sum;
+		}
+
+		private static double getNumConsonants(String s) {
+			s = s.toLowerCase();
 			double consonantCount = 0;
 			for (int i = 0; i < s.length(); ++i) {
 				char c = s.charAt(i);
-				if (c != 'a' & c != 'e' & c != 'i' & c != 'o' & c != 'u' & c != 'y')
+				if (c != 'a' & c != 'e' & c != 'i' & c != 'o' & c != 'u' & c != 'y' & Character.isAlphabetic(c))
 				{
 					consonantCount++;
 				}
@@ -247,7 +256,7 @@ import java.util.Arrays;
 			        	vowelCount++;
 			            break;
 			        default:
-			            // do nothing
+			            break;
 			    }
 			}
 			return vowelCount;
